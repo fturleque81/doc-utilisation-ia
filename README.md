@@ -1,31 +1,56 @@
-# doc-utilisation-ia
+# documentation-ia
 
-Documentation collectée sur l'utilisation de l'IA — site construit avec [MkDocs](https://www.mkdocs.org/) et le thème [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
+Centralisation de la documentation issue de mon apprentissage IA.
 
-## Installation
+## Lancer le site en local
 
-```bash
-pip install -r requirements.txt
+Ce projet utilise MkDocs avec le thème Material.
+
+### Pré-requis
+
+- Windows avec Python 3.11+
+- Lanceur Python `py` disponible
+
+### Installation des dépendances
+
+Depuis la racine du projet :
+
+```powershell
+cd C:\Ciril\documentation-ia
+py -m pip install --upgrade pip
+py -m pip install mkdocs-material
 ```
 
-## Développement local
+### Démarrage en local
 
-```bash
-mkdocs serve
+```powershell
+cd C:\Ciril\documentation-ia
+py -m mkdocs serve
 ```
 
-Le site sera disponible sur <http://127.0.0.1:8000>.
+Ensuite ouvre l'URL affichée dans le terminal (par défaut : <http://127.0.0.1:8000>). 
 
-## Construire le site
+### Build statique
 
-```bash
-mkdocs build
+```powershell
+cd C:\Ciril\documentation-ia
+py -m mkdocs build
 ```
 
-Le site statique sera généré dans le dossier `site/`.
+Le site généré sera dans le dossier `site/`.
 
-## Déploiement sur GitHub Pages
+## Dépannage rapide (Windows)
 
-```bash
-mkdocs gh-deploy
+Si `pip` ou `mkdocs` n'est pas reconnu, c'est normal si les scripts Python ne sont pas dans le PATH.
+Dans ce cas, utilise toujours :
+
+- `py -m pip ...`
+- `py -m mkdocs ...`
+
+Commandes de vérification utiles :
+
+```powershell
+py --version
+py -m pip --version
+py -m mkdocs --version
 ```

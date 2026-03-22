@@ -33,6 +33,9 @@ plugins:
       lang: fr
 
 markdown_extensions:
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -48,12 +51,65 @@ markdown_extensions:
 
 nav:
   - Accueil: index.md
-  - Introduction:
-    - Qu'est-ce que l'IA ?: introduction/quest-ce-que-lia.md
-    - Grands modèles de langage (LLM): introduction/llm.md
-  - Bonnes pratiques:
-    - Rédiger de bons prompts: bonnes-pratiques/rediger-des-prompts.md
-    - Vérifier les réponses: bonnes-pratiques/verifier-les-reponses.md
-  - Outils:
-    - Panorama des outils: outils/panorama.md
-  - Ressources: ressources.md
+  
+  - Chapitre 1 — Installation:
+    - Accueil: chapitre-1-installation/index.md
+    - Comparaison: chapitre-1-installation/comparaison.md
+    - IntelliJ IDEA:
+      - Tutoriel: chapitre-1-installation/intellij/tutoriel.md
+      - Référence: chapitre-1-installation/intellij/reference.md
+    - Visual Studio Code:
+      - Tutoriel: chapitre-1-installation/vscode/tutoriel.md
+      - Référence: chapitre-1-installation/vscode/reference.md
+  
+  - Chapitre 2 — Paramétrage:
+    - Accueil: chapitre-2-parametrage/index.md
+    - IntelliJ IDEA: chapitre-2-parametrage/intellij-parametrage.md
+    - Visual Studio Code: chapitre-2-parametrage/vscode-parametrage.md
+    - Comparaison: chapitre-2-parametrage/comparaison-parametres.md
+  
+  - Chapitre 3 — Contexte & Personnalisation:
+    - Accueil: chapitre-3-contexte/index.md
+    - Concepts Clés: chapitre-3-contexte/concepts.md
+    - Instructions (.instructions.md): chapitre-3-contexte/instructions.md
+    - applyTo Avancé: chapitre-3-contexte/applyto-avance.md
+    - Prompt Files (.prompt.md): chapitre-3-contexte/prompt-files.md
+    - Agents (.agent.md): chapitre-3-contexte/agents.md
+    - Skills (SKILL.md): chapitre-3-contexte/skills.md
+    - Hooks: chapitre-3-contexte/hooks.md
+    - Paramètres du Dépôt: chapitre-3-contexte/parametres-depot.md
+    - VS Code — Configuration Contexte: chapitre-3-contexte/vscode-contexte.md
+    - IntelliJ IDEA — Configuration Contexte: chapitre-3-contexte/intellij-contexte.md
+    - Comparaison Contexte: chapitre-3-contexte/comparaison-contexte.md
+  
+  - Chapitre 4 — Bonnes Pratiques:
+    - Accueil: chapitre-4-bonnes-pratiques/index.md
+    - Utilisation Effective: chapitre-4-bonnes-pratiques/utilisation-effective.md
+    - Organisation du Code: chapitre-4-bonnes-pratiques/organisation-code.md
+    - Productivité: chapitre-4-bonnes-pratiques/productivite.md
+    - Sécurité & Qualité: chapitre-4-bonnes-pratiques/securite-qualite.md
+    - Performance & Ressources: chapitre-4-bonnes-pratiques/performance.md
+  
+  - Chapitre 5 — Troubleshooting:
+    - Accueil: chapitre-5-troubleshooting/index.md
+    - Problèmes Courants: chapitre-5-troubleshooting/problemes-courants.md
+    - Logs & Diagnostic: chapitre-5-troubleshooting/logs-diagnostic.md
+    - Comparaison des Problèmes: chapitre-5-troubleshooting/comparaison-problemes.md
+  
+  - Chapitre 6 — Cas d'Usage:
+    - Accueil: chapitre-6-cas-usage/index.md
+    - Node.js & React: chapitre-6-cas-usage/nodejs-react.md
+    - Python: chapitre-6-cas-usage/python.md
+    - Java: chapitre-6-cas-usage/java.md
+  
+  - Chapitre 7 — Modes CLI:
+    - Accueil: chapitre-7-cli-modes/index.md
+    - Modes CLI Détail: chapitre-7-cli-modes/page-principale.md
+    - Comparaison Modes: chapitre-7-cli-modes/comparaison.md
+  
+  - Appendices:
+    - Accueil: appendices/index.md
+    - FAQ: appendices/faq.md
+    - Raccourcis Clavier: appendices/raccourcis-clavier.md
+    - Ressources Externes: appendices/ressources-externes.md
+    - Templates Configuration: appendices/templates-configuration.md
