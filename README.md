@@ -16,7 +16,6 @@ Ce projet utilise MkDocs avec le thème Material.
 Depuis la racine du projet :
 
 ```powershell
-cd C:\Ciril\documentation-ia
 py -m pip install --upgrade pip
 py -m pip install mkdocs-material
 ```
@@ -24,18 +23,20 @@ py -m pip install mkdocs-material
 ### Démarrage en local
 
 ```powershell
-cd C:\Ciril\documentation-ia
 py -m mkdocs serve
 ```
+
+> **Note** : Lance cette commande depuis la racine du repo (dossier où est `mkdocs.yml`)
 
 Ensuite ouvre l'URL affichée dans le terminal (par défaut : <http://127.0.0.1:8000>). 
 
 ### Build statique
 
 ```powershell
-cd C:\Ciril\documentation-ia
 py -m mkdocs build
 ```
+
+> **Note** : Lance cette commande depuis la racine du repo (dossier où est `mkdocs.yml`)
 
 Le site généré sera dans le dossier `site/`.
 

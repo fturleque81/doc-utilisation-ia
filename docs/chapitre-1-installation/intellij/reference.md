@@ -25,7 +25,7 @@ IntelliJ IDEA stocke ses configurations dans un dossier propre à chaque version
 
     Exemple pour IntelliJ IDEA 2024.1 :
     ```
-    C:\Users\<username>\AppData\Roaming\JetBrains\IntelliJIdea2024.1\options\
+    %APPDATA%\JetBrains\IntelliJIdea2024.1\options\
     ```
 
 === "macOS"

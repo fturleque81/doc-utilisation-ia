@@ -17,10 +17,7 @@ Le fichier `settings.json` contient tous les paramètres VS Code, y compris ceux
     %APPDATA%\Code\User\settings.json
     ```
     
-    Chemin complet type :
-    ```
-    C:\Users\<username>\AppData\Roaming\Code\User\settings.json
-    ```
+    *(Passe automatiquement par ton appdata utilisateur : `C:\Users\[touNom]\AppData\Roaming\Code\User\settings.json`)*
 
 === "macOS"
 

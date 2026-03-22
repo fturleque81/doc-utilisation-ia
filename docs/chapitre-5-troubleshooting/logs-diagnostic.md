@@ -48,8 +48,9 @@ Les logs persistent dans :
 === "Windows"
     ```
     %APPDATA%\Code\logs\
-    Exemple: C:\Users\<user>\AppData\Roaming\Code\logs\
     ```
+    
+    *(Passe automatiquement par ton appdata utilisateur : `C:\Users\[touNom]\AppData\Roaming\Code\logs`)*
 
 === "macOS"
     ```
@@ -87,8 +88,9 @@ Help → Show Log in Files (Linux)
 === "Windows"
     ```
     %APPDATA%\JetBrains\<IDE><version>\log\idea.log
-    Exemple: C:\Users\<user>\AppData\Roaming\JetBrains\IntelliJIdea2023.3\log\idea.log
     ```
+    
+    *(Passe automatiquement par ton appdata utilisateur : `C:\Users\[touNom]\AppData\Roaming\JetBrains\...`)*
 
 === "macOS"
     ```
