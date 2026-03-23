@@ -30,30 +30,42 @@ Vérifiez la version VS Code : *Help → About* ou ++ctrl+shift+p++ → tapez *"
 
 ---
 
-## Étape 1 — Ouvrir le panneau Extensions
+## :material-folder-open: Étape 1 — Ouvrir le panneau Extensions
 
 Ouvrez Visual Studio Code et accédez au **panneau Extensions** :
 
-**Méthode 1 (rapide)** : Raccourci clavier
-- Windows/Linux : ++ctrl+shift+x++
-- macOS : ++cmd+shift+x++
+### :keyboard: Méthode 1 : Raccourci clavier
 
-**Méthode 2 (visuelle)** : Barre latérale gauche
+- **Windows/Linux** : ++ctrl+shift+x++
+- **macOS** : ++cmd+shift+x++
+
+### :material-mouse: Méthode 2 : Barre latérale gauche
+
 1. Cliquez l'icône Extensions (quatre petits carrés)
 
-**Méthode 3 (menu)** : *View → Extensions*
+!!! info "📸 Capture à ajouter"
+    Image attendue : `vscode-marketplace-01.png` — Panneau Extensions / Marketplace
+
+### :material-menu: Méthode 3 : Menu
+
+*View → Extensions*
 
 !!! example "Vous verrez:"
     Une barre de recherche avec "Search Extensions in Marketplace" en haut du panneau.
 
 ---
 
-## Étape 2 — Installer GitHub Copilot
+## :material-download: Étape 2 — Installer GitHub Copilot
+
+### :material-list-box: Étapes d'installation
 
 1. Tapez **`GitHub Copilot`** dans la barre de recherche du panneau Extensions
 2. Le premier résultat doit être l'extension officielle publiée par **GitHub** (avec un badge de vérification ✓)
 3. Vérifiez l'identifiant exact : `GitHub.copilot`
 4. Cliquez le bouton vert **Install**
+
+!!! info "📸 Capture à ajouter"
+    Image attendue : `vscode-install-button-01.png` — Bouton « Install » de GitHub Copilot
 
 !!! danger "Sécurité — Vérification importante"
     Installez **UNIQUEMENT** l'extension publiée par `GitHub` (l'organisation autorisée). Plusieurs extensions imitatrices existent — ignorez-les. L'identifiant correct est `GitHub.copilot`, pas d'autres variantes.
@@ -64,7 +76,7 @@ Ouvrez Visual Studio Code et accédez au **panneau Extensions** :
 
 ---
 
-## Étape 3 — Installer GitHub Copilot Chat (optionnel mais recommandé)
+## :material-chat: Étape 3 — Installer GitHub Copilot Chat (optionnel mais recommandé)
 
 L'interface **chat** n'est pas incluse automatiquement. Installez-la pour utiliser :
 - Chat conversationnel
@@ -80,20 +92,24 @@ L'interface **chat** n'est pas incluse automatiquement. Installez-la pour utilis
 
 ---
 
-## Étape 4 — Authentification avec GitHub
+## :material-github: Étape 4 — Authentification avec GitHub
 
 Après installation, authentifiez-vous :
 
-**Cas 1 : Notification automatique**
+### :material-bell: Cas 1 : Notification automatique
+
 1. Une pop-up apparaît en bas à droite : *"Sign in to use GitHub Copilot"*
 2. Cliquez **"Sign in to GitHub"** ou **"Sign in with GitHub"**
 
-**Cas 2 : Authentification manuelle**
-1. Ouvrez la palette de commandes : ++ctrl+shift+p++ (ou ++cmd+shift+p++ macOS)
-2. Tapez : `GitHub Copilot: Sign In`
-3. Appuyez ++enter++
+### :material-pencil: Cas 2 : Authentification manuelle
 
-**Processus de connexion :**
+- **Windows/Linux** : ++ctrl+shift+p++ → `GitHub Copilot: Sign In`
+- **macOS** : ++cmd+shift+p++ → `GitHub Copilot: Sign In`
+
+!!! info "📸 Capture à ajouter"
+    Image attendue : `vscode-auth-github-01.png` — Boîte de dialogue « Device Flow » d'authentification
+
+### :material-web: Processus de connexion
 1. VS Code ouvre votre navigateur sur GitHub
 2. Si non connecté, connectez-vous avec vos identifiants GitHub
 3. GitHub affiche une page d'autorisation : *"Visual Studio Code wants to access your account"*
@@ -108,14 +124,17 @@ Après installation, authentifiez-vous :
 
 ---
 
-## Étape 5 — Vérifier que Copilot est actif
+### :material-check: Vérification rapideier que Copilot est actif
 
-**Vérification rapide :**
+**Vérification rapide** : :material-check:
 1. Regardez la **barre de statut en bas à droite** de VS Code
 2. Vous devez voir l'icône Copilot (ressemble à un éclair ou logo Copilot)
 3. Si elle est **verte** ou **visible sans point rouge d'erreur** → Copilot est actif
 
-**Test rapide du fonctionnement :**
+!!! info "📸 Capture à ajouter"
+    Image attendue : `vscode-status-bar-icon.png` — Icône Copilot dans la barre de statut (bas à droite)
+
+### :material-play: Test rapide du fonctionnement
 1. Créez un nouveau fichier : *File → New File*
 2. Tapez un langage : `// TypeScript` ou `# Python`
 3. Appuyez ++enter++ et tapez : `function hello` (ou autre début)
@@ -138,19 +157,28 @@ Après installation, authentifiez-vous :
 
 ---
 
-## Votre première interaction avec Copilot Chat
+## :material-chat: Votre première interaction avec Copilot Chat
 
-Maintenant testez le chat :
+### :material-chat-outline: Ouvrir Copilot Chat
 
-1. Ouvrez **Copilot Chat** : ++ctrl+alt+i++ (Windows/Linux) ou ++cmd+alt+i++ (macOS)
-2. Le panneau Chat s'ouvre à droite
-3. Tapez une question simple :
+- **Windows/Linux** : ++ctrl+alt+i++
+- **macOS** : ++cmd+alt+i++
+
+### :material-lightbulb: Première question
+
+1. Le panneau **Chat** s'ouvre à droite
+
+!!! info "📸 Capture à ajouter"
+    Image attendue : `vscode-chat-sidebar-01.png` — Panneau Copilot Chat dans la barre latérale
+
+2. Tapez une question simple :
    ```
    Explique-moi comment utiliser Map en JavaScript
    ```
-4. Copilot répond avec explication + exemples de code
+3. Copilot répond avec explication + exemples de code
 
-Raccourcis Chat courants :
+### :keyboard: Raccourcis Chat disponibles
+
 - **Ouvrir Chat** : ++ctrl+alt+i++
 - **Inline Chat (dans l'éditeur)** : ++ctrl+i++ — modifier du code sélectionné
 - **Quick Chat (fenêtre flottante)** : ++ctrl+shift+i++

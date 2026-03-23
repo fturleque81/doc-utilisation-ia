@@ -23,10 +23,21 @@ theme:
   features:
     - navigation.tabs
     - navigation.sections
+    - navigation.expand
+    - navigation.path
     - navigation.top
     - search.suggest
     - search.highlight
     - content.code.copy
+    - content.code.annotate
+
+extra_css:
+  - stylesheets/extra.css
+
+exclude_docs: |
+  **/README.md
+  **/CAPTURE-TEMPLATE.md
+  **/SCREENSHOTS-GUIDE.md
 
 plugins:
   - search:
@@ -39,8 +50,15 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
+  - pymdownx.keys
   - pymdownx.snippets
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
   - admonition
   - pymdownx.details
   - attr_list
@@ -98,9 +116,13 @@ nav:
   
   - Cas d'Usage:
     - Accueil: chapitre-6-cas-usage/index.md
-    - Node.js & React: chapitre-6-cas-usage/nodejs-react.md
-    - Python: chapitre-6-cas-usage/python.md
+    - Comparaison Écosystèmes: chapitre-6-cas-usage/comparaison-ecosystemes.md
     - Java: chapitre-6-cas-usage/java.md
+    - Java & Spring Boot: chapitre-6-cas-usage/java-spring-boot.md
+    - Node.js & React: chapitre-6-cas-usage/nodejs-react.md
+    - Node.js & Express: chapitre-6-cas-usage/nodejs-express.md
+    - React 19 & TypeScript: chapitre-6-cas-usage/react-typescript.md
+    - Python & FastAPI: chapitre-6-cas-usage/python.md
   
   - Modes CLI:
     - Accueil: chapitre-7-cli-modes/index.md

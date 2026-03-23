@@ -1,8 +1,26 @@
 ﻿# Productivité avec GitHub Copilot
 
-<span class="badge-beginner">Débutant</span>
+<span class="badge-intermediate">Intermédiaire</span>
 
-## Raccourcis essentiels par IDE
+## Optimiser votre Workflow Copilot
+
+### ⚡ Les 3 Modes de Suggestion
+
+| Mode | Usage | Productivité | Qualité |
+|------|-------|--------------|---------|
+| **Inline Suggestions** | Auto-complétion en temps réel | Très rapide (2-5 sec/ligne) | 60-75% acceptable |
+| **Inline Chat** | Question ciblée sur sélection | Rapide (10-20 sec) | 80-90% bon |
+| **Chat Panel** | Architectural, multi-fichier, complex | Lent (30-60 sec) | 90-95% excellent |
+| **Agents / Edits** | Modification auto-propagée | Très rapide (émulation) | Dépend setup |
+
+**Recommandation** :
+- Inline Suggestions : 60% du temps (autocomplétion simple)
+- Inline Chat : 30% du temps (corrections, tests, refactor)
+- Chat Panel : 10% du temps (architecture, design decisions)
+
+---
+
+## Raccourcis Essentiels par IDE
 
 !!! info "Légende de fréquence"
     ⭐ = rarement utilisé · ⭐⭐⭐ = utile régulièrement · ⭐⭐⭐⭐⭐ = geste essentiel au quotidien
@@ -20,8 +38,8 @@
     | Rejeter suggestion | ++escape++ | ⭐⭐⭐⭐⭐ |
     | Déclencher manuellement | ++alt+backslash++ | ⭐⭐⭐ |
     | 10 suggestions (panneau) | ++ctrl+enter++ | ⭐⭐ |
-    | Ouvrir Copilot Chat | ++ctrl+alt+i++ | ⭐⭐⭐⭐⭐ |
-    | Inline Chat | ++ctrl+i++ | ⭐⭐⭐⭐ |
+    | **Ouvrir Copilot Chat** | ++ctrl+alt+i++ | ⭐⭐⭐⭐⭐ |
+    | **Inline Chat** | ++ctrl+i++ | ⭐⭐⭐⭐ |
     | Quick Chat | ++ctrl+shift+i++ | ⭐⭐⭐ |
 
 === "macOS"
@@ -34,8 +52,8 @@
     | Suggestion précédente | ++option+bracket-left++ | ⭐⭐⭐ |
     | Rejeter suggestion | ++escape++ | ⭐⭐⭐⭐⭐ |
     | Déclencher manuellement | ++option+backslash++ | ⭐⭐⭐ |
-    | Ouvrir Copilot Chat | ++cmd+alt+i++ | ⭐⭐⭐⭐⭐ |
-    | Inline Chat | ++cmd+i++ | ⭐⭐⭐⭐ |
+    | **Ouvrir Copilot Chat** | ++cmd+alt+i++ | ⭐⭐⭐⭐⭐ |
+    | **Inline Chat** | ++cmd+i++ | ⭐⭐⭐⭐ |
 
 ### IntelliJ IDEA
 
@@ -49,7 +67,7 @@
     | Suggestion précédente | ++alt+bracket-left++ | ⭐⭐⭐ |
     | Rejeter suggestion | ++escape++ | ⭐⭐⭐⭐⭐ |
     | Déclencher manuellement | ++alt+backslash++ | ⭐⭐⭐ |
-    | Inline Chat | ++ctrl+i++ | ⭐⭐⭐⭐ |
+    | **Inline Chat** | ++ctrl+i++ | ⭐⭐⭐⭐ |
     | Expliquer (clic droit) | Clic droit → Explain This | ⭐⭐⭐ |
 
 === "macOS"
@@ -60,11 +78,11 @@
     | Accepter mot par mot | ++option+right++ | ⭐⭐⭐⭐ |
     | Suggestion suivante | ++option+bracket-right++ | ⭐⭐⭐⭐ |
     | Rejeter suggestion | ++escape++ | ⭐⭐⭐⭐⭐ |
-    | Inline Chat | ++cmd+i++ | ⭐⭐⭐⭐ |
+    | **Inline Chat** | ++cmd+i++ | ⭐⭐⭐⭐ |
 
 ---
 
-## Workflows optimisés
+## Workflows Optimisés
 
 ### Workflow 1 : Développement TDD avec Copilot
 

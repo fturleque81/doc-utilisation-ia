@@ -4,49 +4,84 @@ GitHub Copilot s'adapte à chaque écosystème technologique. Ce chapitre prése
 
 ---
 
-## Technologies couvertes
+## 🎯 Choisir ton Écosystème
+
+Commencez par cette **comparaison d'efficacité** pour sélectionner la meilleure stack avec Copilot :
 
 <div class="grid cards" markdown>
 
--   :simple-nodedotjs: **Node.js & React**
+-   **Comparaison Détaillée**
     
     ---
     
-    TypeScript, Express, React, Jest — configuration optimale pour l'écosystème JavaScript moderne.
+    Tableau comparatif : type safety, accuracy, tests, IDE, productivité par stack.
     
-    [Voir le guide →](nodejs-react.md)
-
--   :simple-python: **Python**
-    
-    ---
-    
-    FastAPI, Django, pytest, type hints — Copilot avec Pylance et les annotations de type.
-    
-    [Voir le guide →](python.md)
-
--   :simple-java: **Java**
-    
-    ---
-    
-    Spring Boot, Maven/Gradle, JUnit — IntelliJ comme IDE principal avec Copilot.
-    
-    [Voir le guide →](java.md)
+    [Consulter la comparaison →](comparaison-ecosystemes.md)
 
 </div>
 
 ---
 
-## Principes communs à tous les projets
+## Cas d'Usage Spécialisés
 
-Quel que soit le langage, ces principes améliorent la qualité des suggestions Copilot :
+<div class="grid cards" markdown>
 
-| Principe | Impact |
-|----------|--------|
-| Types explicites partout | ++ Élevé — Copilot utilise les types pour inférer l'intention |
-| Noms de variables descriptifs | ++ Élevé — `activeUserList` >> `data` |
-| Fichiers liés ouverts dans les onglets | + Moyen — enrichit le contexte |
-| Commentaires de fonction avant implémentation | ++ Élevé — guide directement la génération |
-| Conventions cohérentes dans tout le projet | + Moyen — Copilot apprend le style |
+-   :simple-java: **Java & Spring Boot**
+    
+    ---
+    
+    Enterprise backend, microservices, IntelliJ IDEA. Entities JPA, Services, Controllers, Tests.
+    
+    [Expert guide →](java-spring-boot.md)
+
+-   :simple-nodedotjs: **Node.js & Express**
+    
+    ---
+    
+    API rapide, TypeScript, Prisma ORM, middleware patterns, intégration tests avec Supertest.
+    
+    [Guide complet →](nodejs-express.md)
+
+-   :simple-react: **React 19 & TypeScript**
+    
+    ---
+    
+    Frontend, composants, hooks, Server Components (Next.js), Tailwind CSS, RTL testing.
+    
+    [Guide complet →](react-typescript.md)
+
+-   :simple-python: **Python & FastAPI**
+    
+    ---
+    
+    API Python-first, Pydantic validation, async native, deployment lightweight.
+    
+    [Voir le guide →](python.md)
+
+</div>
+
+---
+
+## Principes Communs à Tous les Projets
+
+Quel que soit le langage/framework, ces principes optimisent la qualité des suggestions Copilot :
+
+| Principe | Impact | Implémentation |
+|----------|--------|-----------------|
+| **Types explicites** | ⭐⭐⭐⭐⭐ | TypeScript, `type User = {}`, `def func() -> User:` |
+| **Noms descriptifs** | ⭐⭐⭐⭐⭐ | `activeUserList` > `data`; `getUserById()` > `getUser()` |
+| **Custom Instructions** | ⭐⭐⭐⭐⭐ | `.github/copilot-instructions.md` avec conventions du projet |
+| **Commentaires de fonction** | ⭐⭐⭐⭐ | Docstrings/JSDoc AVANT implémentation — guide génération |
+| **Fichiers ouverts en tab** | ⭐⭐⭐ | Copilot scanne les tabs ouverts pour enrichir contexte |
+| **Conventions cohérentes** | ⭐⭐⭐ | Copilot apprend et réplique le style du projet |
+
+---
+
+## Ressources du Chapitre
+
+- [Diagrammes Architecture](comparaison-ecosystemes.md#matrice-decision-choisir-ton-ecosysteme) — Matrice décision pour choisir stack
+- [Best Practices Universelles](../chapitre-4-bonnes-pratiques/index.md) — Patterns applicables à tous
+- [Installation IDE](../chapitre-1-installation/index.md) — Setup initial par technologie
 
 ---
 

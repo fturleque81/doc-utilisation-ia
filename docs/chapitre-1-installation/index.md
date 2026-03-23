@@ -55,7 +55,16 @@ Avant de commencer, vérifiez que vous disposez de :
 | **Authentification** | Via Tools → GitHub Copilot | Pop-up automatique à l'installation |
 | **Copilot Chat** | Inclus dans le plugin | Extension séparée (GitHub Copilot Chat) |
 | **Temps d'installation** | ~5 min | ~3 min |
-| **Personnalisation avancée** | Limitée (.agent.md non supporté) | Complète (instructions, agents, skills, hooks) |
+| **Custom Instructions** | ✓ Supporté | ✓ Supporté |
+| **Custom Agents** | ✓ Supporté | ✓ Supporté |
+| **Prompt Files** | ✓ Supporté | ✓ Supporté |
+| **Agent Skills** | ✓ Supporté (lecture) | ✓ Supporté |
+| **MCP (Model Context Protocol)** | ✓ Supporté | ✓ Supporté |
+| **Hooks personnalisés** | ✗ Non supportés | ✗ Non supportés |
+
+!!! warning "Versions minimales requises"
+    - **IntelliJ IDEA** : 2023.1+ pour Copilot complet
+    - **VS Code** : 1.85+ pour toutes les fonctionnalités (Custom agents, MCP, etc.)
 
 !!! tip "Vous utilisez les deux IDEs ?"
     Si vous alternez entre IntelliJ et VS Code, installez Copilot sur les deux. Votre abonnement couvre tous vos IDEs simultanément.

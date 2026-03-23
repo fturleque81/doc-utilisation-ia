@@ -1,47 +1,68 @@
-# Bonnes Pratiques
+# Bonnes Pratiques avec GitHub Copilot
 
 Installer et configurer Copilot, c'est bien. L'utiliser efficacement au quotidien, c'est mieux. Ce chapitre rassemble les bonnes pratiques pour tirer le maximum de GitHub Copilot tout en maintenant qualité, sécurité et productivité.
 
 ---
 
-## Ce que vous trouverez dans ce chapitre
+## Pyramide d'Efficacité Copilot
+
+```
+                        ▲
+                       ╱ ╲  Nommage + Typage
+                      ╱   ╱ + Structure claire
+                     ╱───╱  + Commentaires
+                    ╱   ╱   + Custom Instructions
+                   ╱───╱    + Validation Tests
+                  ╱   ╱     + IDE Optimisé
+                 ╱───╱
+```
+
+À chaque niveau, l'efficacité Copilot +20-30%. **Sans base** : 40% accuracy. **Avec base solide** : 95%+ accuracy.
+
+---
+
+## Pages du Chapitre
 
 <div class="grid cards" markdown>
 
-- :material-comment-text: **[Utilisation effective](utilisation-effective.md)**
+- :material-comment-text: **[Utilisation Effective](utilisation-effective.md)**
 
-    Comment écrire des prompts efficaces, quand accepter ou refuser les suggestions, comment itérer avec Copilot
+    Prompts efficaces, quand accepter/refuser, itératives avec Copilot, diagrammes workflows
 
-- :material-code-tags: **[Organisation du code](organisation-code.md)**
+- :material-code-tags: **[Organisation du Code](organisation-code.md)**
 
-    Structure de projet, nommage, type hints, commentaires utiles — tout ce qui améliore le contexte Copilot
+    Nommage descriptif, typage explicite, séparation responsabilités, pyramide efficacité
 
 - :material-lightning-bolt: **[Productivité](productivite.md)**
 
-    Raccourcis essentiels, workflows optimisés pour IntelliJ et VS Code, intégration au quotidien
+    Raccourcis essentiels, 3 modes (Inline/Chat/Panel), workflows optimisés
 
 - :material-shield-check: **[Sécurité & Qualité](securite-qualite.md)**
 
-    Vérifier le code généré, gestion des licences, revue de pair, tests obligatoires
+    Checklist validation, vulnérabilités courantes, patterns validation (Zod/Pydantic)
 
 - :material-speedometer: **[Performance & Ressources](performance.md)**
 
-    Impact sur les performances de l'IDE, optimisation, désactivation contextuelle
+    Impact IDE, optimisation, throttling contextuel, désactivation sélective
 
 </div>
 
 ---
 
-## Principes fondamentaux
+## Principes Fondamentaux
 
-**Copilot est un assistant, pas un remplaçant.** Le code généré est une suggestion — vous restez responsable de tout ce que vous committez.
-
-**La qualité des suggestions dépend de la qualité du contexte.** Un code bien nommé, bien documenté et bien structuré génère de meilleures suggestions.
-
-**Vérifiez toujours avant d'accepter.** Même une suggestion visuellement correcte peut contenir des erreurs logiques ou des failles de sécurité.
+| Principe | Impact | Détail |
+|----------|--------|--------|
+| **Context is King** | ⭐⭐⭐⭐⭐ | Code clair = suggestions parfaites |
+| **Always Verify** | ⭐⭐⭐⭐⭐ | Vous êtes responsable du commit |
+| **Type Everything** | ⭐⭐⭐⭐⭐ | Types = guide pour Copilot |
+| **Tests First** | ⭐⭐⭐⭐ | TDD améliore qualité suggestions |
+| **Security Review** | ⭐⭐⭐⭐ | SQL/Secrets/XSS check mandatory |
 
 ---
 
 !!! tip "Par où commencer ?"
-    Si vous débutez, commencez par [Utilisation effective](utilisation-effective.md) — c'est la page avec le plus d'impact immédiat sur votre productivité avec Copilot.
+    **Débutant** → [Utilisation Effective](utilisation-effective.md)  
+    **Intermédiaire** → [Organisation Code](organisation-code.md)  
+    **Avancé** → [Sécurité & Qualité](securite-qualite.md)
 

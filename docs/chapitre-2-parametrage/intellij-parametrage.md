@@ -5,6 +5,9 @@
 !!! info "Version 2025.3.4+"
     Cette documentation s'applique à **IntelliJ IDEA 2025.3.4 et versions récentes**. L'interface GitHub Copilot a été structurée avec les catégories : General, Chat, Completions, Customizations, Keymap, MCP, Network. Les paramètres des versions antérieures diffèrent.
 
+!!! warning "Raccourcis clavier — valeurs par défaut uniquement"
+    Tous les raccourcis mentionnés dans cette page correspondent aux **valeurs par défaut** d'IntelliJ IDEA. Selon votre keymap (AZERTY, IdeaVim, Emacs, schéma personnalisé d'entreprise), ces raccourcis peuvent ne pas fonctionner ou être mappés différemment. Consultez la [section Keymap](#keymap) pour vérifier et adapter vos raccourcis.
+
 ## Accès aux paramètres
 
 Trois façons d'accéder aux paramètres GitHub Copilot :
@@ -39,7 +42,7 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 
 ### 🔧 General
 
-**Authentification et gestion du plugin :**
+#### Authentification et gestion du plugin
 
 - **GitHub Copilot account settings** — Gérez votre compte GitHub, authentification device code flow ou custom enterprise URI
 - **Plugin updates** — Canal de mise à jour (Stable / Beta), vérification automatique
@@ -48,13 +51,15 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 ![Section General - Authentification et gestion du plugin](../assets/images/intellij/general-copilot.png){ .doc-screenshot }
 *Paramètres généraux : compte, mise à jour, authentification, télémétrie*
 
-**Quand l'utiliser :** Lors de la première configuration, ou pour changer de compte GitHub.
+#### Quand l'utiliser
+
+Lors de la première configuration, ou pour changer de compte GitHub.
 
 ---
 
 ### 💬 Chat
 
-**Configuration des agents et du mode Chat :**
+#### Configuration des agents et du mode Chat
 
 - **Enable Auto Model** — Sélectionne automatiquement le meilleur modèle pour votre requête
 - **Natural Language** — Langue des interactions (français, anglais, etc.)
@@ -69,13 +74,58 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 **Mode Agent (avancé) :**
 
 - **Enable Agent mode** — Autorise Copilot à exécuter des commandes autonomes
-- **Agent Max Requests** — Limite du nombre de requêtes par session (défaut 250)
-- **Anthropic Thinking Budget Tokens** — Tokens alloués pour la réflexion étendue (défaut 1024)
 - **Enable Custom Agent** — Active les agents personnalisés définis dans `AGENTS.md`
 - **Enable Coding Agent** — Active les actions de génération/modification de code
 - **Enable Subaagent** — Permet aux agents d'invoquer d'autres agents
 - **Enable Skills** — Active les compétences spécialisées
 - **Enable Code Review** — Active les revues de code assistées
+
+#### Agent Max Requests
+
+Quand le mode Agent est actif, Copilot peut effectuer des **actions autonomes enchaînées** : lire des fichiers, écrire du code, appeler des outils MCP, exécuter des commandes terminal. Chacune de ces actions compte comme **1 requête** dans le compteur.
+
+Ce paramètre fixe une limite haute pour une session d'agent. Il sert à deux choses :
+
+1. **Protéger contre les boucles infinies** : un agent mal configuré ou confronté à un problème ambiguë peut s'emballer et consommer du quota silencieusement.
+2. **Contrôler la consommation** : chaque requête consomme des tokens sur votre abonnement GitHub Copilot.
+
+**Valeur par défaut :** 250
+
+| Profil | Valeur recommandée | Cas d'usage typique |
+|--------|--------------------|--------------------|
+| Débutant | 50–100 | Tâches simples, génération de méthodes isolées |
+| Développeur solo | 150–250 | Refactoring de classes, génération de tests |
+| Expert / migrations | 250–500 | Réécriture multi-fichiers, migrations complexes |
+
+!!! tip "Bonne pratique"
+    Commencez avec 100–150. Si vos sessions d'agent sont systématiquement interrompues avant la fin, augmentez progressivement. Une valeur trop haute ne garantit pas de meilleures réponses — elle augmente seulement le risque de dérives non surveillées.
+
+#### Anthropic Thinking Budget Tokens
+
+Ce paramètre s'applique **exclusivement aux modèles Claude (Anthropic)**. Il ne concerne pas GPT-4.x ou les autres modèles OpenAI.
+
+**Qu'est-ce que le "Extended Thinking" ?**
+
+Claude (contrairement à GPT) peut activer un mode de **raisonnement étendu** avant de formuler sa réponse. Pendant cette phase, le modèle "réfléchit" en interne : il décompose le problème, explore plusieurs pistes, vérifie sa cohérence — tout cela de manière invisible pour l'utilisateur. Ce processus consomme des tokens qui ne font **pas partie** de la réponse finale visible.
+
+Le paramètre `Anthropic Thinking Budget Tokens` contrôle le **budget maximal de tokens** alloué à cette phase de réflexion interne.
+
+**Valeur par défaut :** 1 024 tokens
+
+| Tâche | Budget recommandé | Remarque |
+|-------|-------------------|----------|
+| Questions simples, complétion de code | 1 024 (défaut) | Suffisant dans 90% des cas |
+| Debug multi-fichiers, analyse de stack trace | 2 048–4 096 | Améliore la précision du diagnostic |
+| Refactoring d'architecture, conception de classes | 4 096–8 192 | Utile si les réponses semblent trop superficielles |
+| Migrations complexes, analyse de codebase entier | 8 192 | Réserver aux tâches vraiment complexes |
+
+**Différence avec GPT :** les modèles GPT-4.x ne disposent pas de ce mécanisme de thinking étendu. Ce paramètre est sans effet si vous n'utilisez pas Claude comme modèle actif.
+
+!!! tip "Éviter les pertes de tokens"
+    Un budget élevé ne garantit pas une meilleure réponse si la tâche est simple — les tokens de raisonnement seront consommés inutilement. Calibrez ce paramètre selon la **complexité réelle** de vos interactions habituelles. Pour un usage quotidien standard, 1 024–2 048 est le bon équilibre entre qualité et consommation.
+
+!!! warning "Impact sur la consommation"
+    Augmenter le thinking budget augmente la consommation de tokens de votre abonnement Copilot, même si la réponse affichée semble identique. En cas de quota limité (plan Copilot Individual), préférez garder la valeur par défaut et n'augmentez que ponctuellement.
 
 ![Section Chat > Agent - Configuration des agents](../assets/images/intellij/chat-copilot-2.png){ .doc-screenshot }
 *Mode Agent : activation des agents personnalisés, skills, et code review*
@@ -90,13 +140,15 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 ![Section Chat > Auto-approve - Configuration de l'auto-approbation](../assets/images/intellij/chat-copilot-3.png){ .doc-screenshot }
 *Auto-approve : automatisation des validations pour modifications, terminal, et fichiers*
 
-**Quand l'utiliser :** Configuration personnalisée du Chat, activation des agents et de la revue de code.
+#### Quand l'utiliser
+
+Configuration personnalisée du Chat, activation des agents et de la revue de code.
 
 ---
 
 ### ✏️ Completions
 
-**Configuration des complétions automatiques :**
+#### Configuration des complétions automatiques
 
 - **Automatically show completions** — Active/désactive les suggestions pendant la frappe
 - **Enable Next Edit Suggestions (NES)** — Propose la prochaine édition logique
@@ -107,30 +159,54 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 ![Section Completions - Configuration des suggestions automatiques](../assets/images/intellij/completions-copilot.png){ .doc-screenshot }
 *Paramètres des complétions : auto-show, NES, affichage side-by-side, model*
 
-**Langages :**
+**Langages** :
 
 - **Enabled languages for completions** — Liste des langages supportés (Java, Python, C#, JavaScript, SQL, etc.)
   - Les langages cochés reçoivent les suggestions
   - Décochez pour désactiver Copilot sur des fichiers sensibles (`.env`, configuration critique)
 
-**Quand l'utiliser :** Pour contrôler quand et où Copilot propose des suggestions.
+#### Quand l'utiliser
+
+Pour contrôler quand et où Copilot propose des suggestions.
 
 ---
 
 ### 📝 Customizations
 
-**Instructions personnalisées pour guider Copilot :**
+#### Instructions personnalisées pour guider Copilot
 
-- **Copilot Instructions** — Directive globale (ex: "Utilise toujours les async/await en TypeScript")
-- **Instruction Files** — Fichiers `.md` à appliquer par contexte (Workspace ou Global)
-- **Git Commit Instructions** — Instructions pour les messages de commit
-- **AGENTS.md** — Définit des agents personnalisés pour le Chat
+La section Customizations est le **pont entre le paramétrage de l'IDE et la personnalisation intelligente de Copilot**. Elle regroupe tous les mécanismes qui permettent d'injecter du contexte permanent dans les interactions : règles de style, comportements attendus, agents spécialisés, templates de prompts.
+
+Ces paramètres ont un impact direct sur la **qualité et la cohérence des réponses**. Un Copilot sans Customizations répond de façon générique ; un Copilot bien configuré connaît vos conventions d'équipe, votre stack technique, et adopte le bon comportement sans avoir à le répéter à chaque requête.
+
+- **Copilot Instructions** — Directive globale permanente (ex: "Utilise toujours les async/await en TypeScript")
+- **Instruction Files** — Fichiers `.instructions.md` à appliquer par contexte (`applyTo` par pattern de fichier ou de dossier)
+- **Git Commit Instructions** — Instructions pour standardiser le format des messages de commit
+- **AGENTS.md** — Définit des agents personnalisés pour le Chat (rôles, outils, comportements)
 - **CLAUDE.md** — Configuration spécifique du modèle Claude (expérimental)
-- **Prompt Files** — Modèles réutilisables pour des tâches répétitives
-- **Chat Agents** — Ajoute des agents personnalisés (Workspace level)
+- **Prompt Files** — Modèles réutilisables pour des tâches répétitives (revue de code, génération de tests…)
+- **Chat Agents** — Ajoute des agents personnalisés au niveau du workspace
+- **Skills (`SKILL.md`)** — Compétences spécialisées invocables depuis le Chat ; IntelliJ les charge en **lecture seule** (les utiliser, pas les créer depuis l'IDE)
 
 ![Section Customizations - Instructions et configurations personnalisées](../assets/images/intellij/customizations-copilot.png){ .doc-screenshot }
-*Customizations : instructions, AGENTS.md, CLAUDE.md, prompt files, chat agents*
+*Customizations : instructions, AGENTS.md, CLAUDE.md, prompt files, chat agents, skills*
+
+#### Ce que chaque paramètre apporte — et où aller plus loin
+
+Chaque sous-paramètre correspond à un mécanisme documenté en détail dans le **[Contexte & Personnalisation](../chapitre-3-contexte/index.md)**. Ce chapitre explique comment créer, structurer et combiner ces fichiers pour obtenir un Copilot parfaitement adapté à votre projet.
+
+| Paramètre Customizations | Ce que ça apporte | Documentation détaillée |
+|---|---|---|
+| **Copilot Instructions** | Règle globale appliquée à toutes les conversations, sans avoir à la répéter | [Instructions Copilot](../chapitre-3-contexte/instructions.md) |
+| **Instruction Files** | Règles ciblées sur des fichiers spécifiques via `applyTo` (ex: appliquer des conventions Java uniquement aux `.java`) | [Instructions Copilot](../chapitre-3-contexte/instructions.md) |
+| **Git Commit Instructions** | Messages de commit cohérents et conformes à vos conventions (Conventional Commits, ticket Jira…) | [Instructions Copilot](../chapitre-3-contexte/instructions.md) |
+| **AGENTS.md** | Crée des agents avec un rôle, des outils et des instructions dédiés (ex: agent "Reviewer", agent "Test Generator") | [Agents Copilot](../chapitre-3-contexte/agents.md) |
+| **Prompt Files** | Sauvegarde des prompts complexes sous forme de templates invocables depuis le Chat | [Prompt Files](../chapitre-3-contexte/prompt-files.md) |
+| **Chat Agents** | Ajoute des agents personnalisés directement dans le sélecteur de mode du Chat (niveau workspace) | [Agents Copilot](../chapitre-3-contexte/agents.md) |
+| **Skills (`SKILL.md`)** | Modules de connaissance spécialisée (ex: standards API, sécurité, domaine métier) invocables dans le Chat via `copilot-skill://`. IntelliJ les utilise en **lecture seule** — ils se créent dans VS Code ou manuellement, mais fonctionnent dans les deux IDEs | [Skills Copilot](../chapitre-3-contexte/skills.md) |
+
+!!! tip "La maîtrise des Customizations est le vrai levier de productivité"
+    Les paramètres de Completions et de Chat sont des réglages de confort. Les Customizations, elles, définissent **comment Copilot comprend votre projet**. Consultez le [Chapitre 3 — Contexte & Personnalisation](../chapitre-3-contexte/index.md) pour configurer ces mécanismes et transformer Copilot en véritable assistant de votre codebase.
 
 **Quand l'utiliser :** Standardisation d'équipe, amélioration de la cohérence des suggestions.
 
@@ -138,7 +214,7 @@ Les paramètres GitHub Copilot sont organisés en 6 catégories principales. Exp
 
 ### ⌨️ Keymap
 
-**Raccourcis clavier GitHub Copilot :**
+#### Raccourcis clavier GitHub Copilot
 
 Vérifiez et personnalisez les raccourcis clavier en naviguant vers *Keymap → GitHub Copilot* (Windows/Linux) ou *Preferences → Keymap* (macOS).
 
@@ -153,13 +229,15 @@ Vérifiez et personnalisez les raccourcis clavier en naviguant vers *Keymap → 
 !!! warning "⚠️ Attention"
     Les raccourcis clavier **dépendent de votre configuration**. Si vous utilisez un clavier AZERTY ou avez personnalisé les raccourcis, les touches réelles peuvent différer. Vérifiez toujours sous *Keymap → GitHub Copilot*.
 
-**Quand l'utiliser :** Lors de la configuration initiale ou pour adapter les raccourcis à votre workflow.
+#### Quand l'utiliser
+
+Lors de la configuration initiale ou pour adapter les raccourcis à votre workflow.
 
 ---
 
 ### 🔗 Model Context Protocol (MCP)
 
-**Qu'est-ce que MCP ?**
+#### Qu'est-ce que MCP ?
 
 Model Context Protocol est un **protocole standard** qui permet à Copilot d'intégrer et d'utiliser des **outils et des données externes** directement dans le Chat. Avec MCP, vous pouvez :
 
@@ -214,17 +292,43 @@ Les MCPs se configurent dans un fichier JSON (localisation selon l'IDE).
 
 Configuration des connexions réseau, proxy, et certificats SSL (rarement nécessaire sauf en entreprise).
 
-**Quand l'utiliser :** Environnements d'entreprise avec proxy obligatoire.
+#### Quand l'utiliser
+
+Environnements d'entreprise avec proxy obligatoire.
 
 
 
 ## Profils de configuration recommandés
 
-Démarrez avec l'un de ces profils et préfinalisez-le selon vos préférences :
+Copilot est un outil à double tranchant : mal calibré, il peut devenir **intrusif** (suggestions constantes qui brisent la concentration) ou au contraire **trop discret** (aucune aide visible). Ces trois profils offrent des points de départ calibrés selon votre expérience et votre contexte de travail.
+
+### Les deux axes de granularité
+
+**1. Automatisme des suggestions (Completions)**
+Contrôle si Copilot propose des suggestions automatiquement pendant la frappe ou seulement sur demande explicite. En mode automatique, chaque pause de saisie déclenche une suggestion — pratique en apprentissage, potentiellement gênant sur du code complexe où la concentration est prioritaire.
+
+**2. Niveau d'autonomie de l'agent (Chat → Agent mode)**
+Détermine si Copilot se limite à des suggestions passives ou peut agir de façon autonome : lire des fichiers, écrire du code, exécuter des commandes. Le mode agent offre une productivité maximale mais nécessite une **confiance établie** dans les suggestions générées — d'où l'importance de bien configurer les Customizations avant de l'activer.
+
+### Tableau comparatif des profils
+
+| Critère | 🟢 Débutant | 🔴 Expert | 👥 Équipe |
+|---|---|---|---|
+| Suggestions automatiques | ✅ Maximum | ⚠️ Manuel | ✅ Activé |
+| Mode Agent | ❌ Désactivé | ✅ Complet | ✅ Activé |
+| Auto-approve | ❌ | ❌ Manuel | ❌ Désactivé |
+| Customizations | Minimales | Fines et ciblées | Partagées (workspace) |
+| Langages actifs | Tous | Sélectifs | Projet uniquement |
+| Idéal pour | Apprentissage, découverte | Contrôle maximal | Cohérence d'équipe |
+
+!!! tip "Ces profils sont des points de départ"
+    Ne les appliquez pas tels quels sans les adapter à votre workflow. Activez progressivement les fonctionnalités avancées (Agent mode, Auto-approve) à mesure que vous gagnez en confiance.
+
+---
 
 ### 🟢 Profil Débutant
 
-Pour ceux qui découvrent Copilot et veulent un maximum d'aide :
+#### Pour ceux qui découvrent Copilot et veulent un maximum d'aide
 
 **Completions :**
 ```
@@ -249,7 +353,7 @@ Pour ceux qui découvrent Copilot et veulent un maximum d'aide :
 
 ### 🔴 Profil Expert
 
-Pour les développeurs expérimentés qui veulent le contrôle granulaire :
+#### Pour les développeurs expérimentés qui veulent le contrôle granulaire
 
 **Completions :**
 ```
@@ -278,7 +382,7 @@ Pour les développeurs expérimentés qui veulent le contrôle granulaire :
 
 ### 👥 Profil Équipe
 
-Pour standardiser la configuration dans une équipe :
+#### Pour standardiser la configuration dans une équipe
 
 **Completions :**
 ```
@@ -309,11 +413,20 @@ Pour standardiser la configuration dans une équipe :
 
 ## Configuration avancée
 
+L'interface graphique d'IntelliJ n'expose pas la totalité des paramètres du plugin GitHub Copilot. Certains réglages fins — délai avant l'affichage des suggestions, comportements expérimentaux, flags de fonctionnalités en preview — ne sont accessibles que via le **fichier XML de configuration** généré par l'IDE.
+
+Cas d'usage typiques :
+
+- **Régler le `completionDelay`** : augmenter ce délai réduit les suggestions intempestives pendant la saisie rapide, sans désactiver complètement les complétions automatiques.
+- **Activer des fonctionnalités expérimentales** : certaines features sont en preview et non encore exposées dans l'UI.
+- **Diagnostic comparatif** : comparer les valeurs entre deux installations (postes dev vs. CI) pour identifier des incohérences de comportement.
+
 ### Fichier de configuration XML
 
-Pour les réglages non exposés dans l'UI, éditer directement le fichier XML :
+#### Pour les réglages non exposés dans l'UI, éditer directement le fichier XML
 
 **Localisation :**
+
 - Windows : `%APPDATA%\JetBrains\<version>\options\github-copilot.xml`
 - macOS : `~/Library/Application Support/JetBrains/<version>/options/github-copilot.xml`
 - Linux : `~/.config/JetBrains/<version>/options/github-copilot.xml`

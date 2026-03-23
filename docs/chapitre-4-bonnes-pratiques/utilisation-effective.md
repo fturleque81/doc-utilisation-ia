@@ -2,6 +2,31 @@
 
 <span class="badge-intermediate">Intermédiaire</span>
 
+## Guide Décisionnel : Quand utiliser quoi ?
+
+Avant de commencer, choisissez le bon outil pour votre tâche :
+
+```mermaid
+graph TD
+    A["Besoin Copilot ?"] --> B{Complexité ?}
+    B -->|Simple, répétitif| C["Suggestions Inline <br/> Tab + Génériques"]
+    B -->|Question, exploration| D["Copilot Chat <br/> Ctrl+Alt+I "]
+    B -->|Grosse refactor| E["Copilot Edits <br/> Ctrl+Shift+Alt+O "]
+    B -->|Automatiser issue| F["Copilot Agents <br/> Pro+ seulement "]
+    
+    C --> G["Accepter avec Tab <br/> Ou rejeter Esc"]
+    D --> H["Utiliser Slash commands <br/> /explain /tests /doc "]
+    E --> I["Mode collaboratif <br/> ou autonome"]
+    F --> J["Depuis GitHub.com <br/> ou assigné"]
+    
+    style C fill:#e3f2fd
+    style D fill:#f3e5f5
+    style E fill:#fce4ec
+    style F fill:#fff3e0
+```
+
+---
+
 ## Écrire des prompts efficaces (commentaires)
 
 La façon la plus efficace de guider Copilot pour les suggestions inline est d'écrire des **commentaires précis** avant votre code.
@@ -194,6 +219,58 @@ Si la première suggestion ne convient pas :
 1. Acceptez le début d'une fonction générée par Copilot
 2. Ouvrez Copilot Chat (++ctrl+i++) sur le code incomplet
 3. Demandez : "*Complète cette fonction en ajoutant la gestion de [cas spécifique]*"
+
+---
+
+## Valider le Code Généré
+
+**Principe clé** : Vous êtes **toujours responsable** du code que vous committez. Copilot est un assistant, pas un garant de qualité.
+
+### Flow de Validation
+
+```mermaid
+sequenceDiagram
+    participant U as Développeur
+    participant C as Copilot
+    participant IDE as IDE/Linter
+    participant VCS as Git/Review
+    
+    U->>C: Demande suggestion
+    C->>U: Code généré
+    U->>U: 1. Lisibilité OK ?
+    U->>U: 2. Logique correcte ?
+    U->>U: 3. Aucune faille sécu ?
+    U->>IDE: 4. Types OK ?
+    IDE->>U: Erreurs TS/Python ?
+    U->>VCS: 5. Conventions projeт ?
+    alt Tout OK
+        U->>VCS: Commit + Push
+    else Problème détecté
+        U->>C: Chat : "Corrige [problème]"
+        C->>U: Code amélioré
+    end
+```
+
+### Checklist de Validation
+
+Avant d'accepter une suggestion, demandez-vous :
+
+| Aspect | Question | Action si ❌ |
+|--------|----------|------------|
+| **Lisibilité** | Je comprends ce que ce code fait ? | Rejeter, demander à Copilot Chat |
+| **Logique** | La logique répond exactement ma demande ? | Corriger manuellement ou utiliser Edits |
+| **Sécurité** | Pas d'injection SQL, XSS, ou secrets ? | Rejeter immédiatement |
+| **Types** | Types corrects pour mon contexte ? | Laisser IDE proposer fixes |
+| **Perfs** | Pas de boucles infinies ou N+1 queries ? | Revoir algorithme |
+| **Tests** | Ce code a besoin de tests ? | Générer avec Copilot `/tests` |
+| **Conventions** | Respecte le style du projet ? | Utiliser formatters (Prettier, Black) |
+
+!!! danger "Sécurité — Points d'attention"
+    - ❌ **Jamais** accepter un code avec secrets/API keys en dur
+    - ❌ **Jamais** faire confiance à des requêtes SQL construites par string concat
+    - ❌ **Toujours** valider les inputs utilisateur avant utilisation
+    - ❌ **Toujours** utiliser parameterized queries/prepared statements
+    - ✅ **Utiliser** git hooks (pre-commit) pour bloquer les secrets
 
 ---
 

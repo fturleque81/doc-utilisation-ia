@@ -1,63 +1,335 @@
-﻿# Python — Cas d'Usage
+﻿# :simple-python: Cas d'Usage — Python & FastAPI avec GitHub Copilot
 
-## Stack couverte
+<span class="badge-intermediate">Intermédiaire</span>
 
-- **Langage** : Python 3.10+
-- **Frameworks** : FastAPI, Django, Flask
-- **Qualité** : mypy, Ruff, Black
-- **Tests** : pytest avec fixtures et parametrize
-- **IDE** : VS Code + Pylance (recommandé) ou PyCharm
+## Stack Recommandé
+
+Configuration optimale pour Copilot sur Python/FastAPI :
+
+| Composant | Version | Raison |
+|-----------|---------|--------|
+| **Python** | 3.11+ LTS | Type hints améliorés, performance |
+| **Framework** | FastAPI 0.100+ | Async natif, Pydantic v2 auto-docs |
+| **ORM** | SQLAlchemy 2.0+ | Type hints complètes, async support |
+| **Validation** | Pydantic 2.0+ | Type inference impeccable |
+| **Testing** | pytest 7.4+ | Fixtures, parametrize, coverage |
+| **Type Checker** | mypy 1.5+ ou Pyright | Détecte erreurs avant runtime |
+| **Linter** | Ruff 0.1+ | Ultra-rapide, très complet |
+| **IDE** | VS Code + Pylance | Meilleur support Python + Copilot |
 
 ---
 
-## Pourquoi les annotations de type transforment Copilot
+## Configurer Copilot pour FastAPI
 
-Sans type hints, Copilot génère du code Python générique. Avec des annotations de type complètes, il génère du code précis et adapté à votre domaine.
+### Custom Instructions (`.github/copilot-instructions.md`)
+
+```markdown
+# GitHub Copilot — Python/FastAPI Project
+
+Stack: Python 3.11, FastAPI 0.100, SQLAlchemy 2.0, Pydantic 2.0, PostgreSQL 15
+
+Architecture (Layered):
+- Routes: FastAPI APIRouter — max 10 lines per endpoint
+- Schemas: Pydantic models for validation + response serialization
+- Models: SQLAlchemy ORM entities with type annotations
+- Services: Business logic, database operations, external integrations
+- Dependencies: FastAPI dependency injection for auth + DB session
+- Tests: pytest with fixtures, parametrize, mock where needed
+
+Conventions:
+- Naming: snake_case functions, PascalCase classes/models
+- Type hints: ALL functions must have return type annotation
+- Docstrings: Google-style docstrings for all public functions
+- Async: Use async/await for I/O operations (DB, API calls)
+- Error handling: Raise FastAPI HTTPException for API errors
+
+Pydantic:
+- BaseModel for all request/response schemas
+- Use Field() for documentation + validation
+- Config class for orm_mode = True (SQLAlchemy interop)
+- Use validators for custom validation logic
+
+FastAPI:
+- router.get/post/put/delete for endpoints
+- Dependency injection for auth, DB session
+- HTTPException for error responses with status codes
+- Tags for grouping endpoints in docs
+
+Testing:
+- Use pytest fixtures for DB session, app client
+- Test all happy paths + error cases
+- Mock external services (APIs, payment gateways)
+- Coverage target: 80% minimum
+
+Database:
+- Async engine: create_async_engine()
+- Sessions via dependency injection
+- Migrations: Alembic with auto-detect
+- Relationships: Use back_populates for bidirectional relations
+
+Security:
+- OAuth2 via oauth2_scheme or custom middleware
+- Password hashing: passlib with bcrypt
+- JWTs for stateless auth
+- Rate limiting: via slowapi or custom middleware
+
+Type Safety:
+- Enable strict mypy checks
+- No implicit Any
+- Use Literal[] for string enums
+- Use Union[] / Optional[] explicitly
+```
+
+---
+
+## Patterns FastAPI Optimisés pour Copilot
+
+### 1. Route avec Pydantic Validation
 
 ```python
-# Sans type hints — Copilot génère quelque chose de générique
-def get_users(db, filters):
-    ...
+# schemas/user.py
+from pydantic import BaseModel, EmailStr, Field
 
-# Avec type hints — Copilot comprend les types et génère du code précis
-from sqlalchemy.orm import Session
-from .models import User
-from .schemas import UserFilter, UserResponse
+class UserCreate(BaseModel):
+    email: EmailStr
+    name: str = Field(..., min_length=2, max_length=100)
+    age: int = Field(..., ge=18, le=150)
 
-def get_users(
-    db: Session,
-    filters: UserFilter,
-    skip: int = 0,
-    limit: int = 100,
-) -> list[UserResponse]:
-    ...
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    name: str
+    model_config = {"from_attributes": True}  # SQLAlchemy interop
+
+# routes/users.py
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from ..schemas.user import UserCreate, UserResponse
+from ..services.user import UserService
+from ..dependencies import get_db_session
+
+router = APIRouter(prefix="/users", tags=["users"])
+user_service = UserService()
+
+@router.post("", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    user_create: UserCreate,
+    db: AsyncSession = Depends(get_db_session)
+) -> UserResponse:
+    """Crée un nouvel utilisateur avec validation d'unicité d'email."""
+    existing = await user_service.get_by_email(db, user_create.email)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    user = await user_service.create(db, user_create)
+    return UserResponse.model_validate(user)
+
+@router.get("/{user_id}", response_model=UserResponse)
+async def get_user(
+    user_id: int,
+    db: AsyncSession = Depends(get_db_session)
+) -> UserResponse:
+    """Récupère un utilisateur par ID."""
+    user = await user_service.get_by_id(db, user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    return UserResponse.model_validate(user)
+```
+
+### 2. Service avec SQLAlchemy Async
+
+```python
+# services/user.py
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from ..models.user import User
+from ..schemas.user import UserCreate
+
+class UserService:
+    async def create(self, db: AsyncSession, user_create: UserCreate) -> User:
+        """Crée et persiste un nouvel utilisateur."""
+        db_user = User(
+            email=user_create.email,
+            name=user_create.name,
+            age=user_create.age
+        )
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user
+    
+    async def get_by_id(self, db: AsyncSession, user_id: int) -> User | None:
+        """Récupère un utilisateur par ID."""
+        stmt = select(User).where(User.id == user_id)
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
+    
+    async def get_by_email(self, db: AsyncSession, email: str) -> User | None:
+        """Récupère un utilisateur par email."""
+        stmt = select(User).where(User.email == email)
+        result = await db.execute(stmt)
+        return result.scalar_one_or_none()
+```
+
+### 3. SQLAlchemy Models Typés
+
+```python
+# models/user.py
+from datetime import datetime
+from sqlalchemy import String, Integer, DateTime, func
+from sqlalchemy.orm import declarative_base, Mapped, mapped_column
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    age: Mapped[int] = mapped_column(Integer, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False
+    )
 ```
 
 ---
 
-## Structure de projet recommandée
+## Tests Pytest + Copilot
+
+### Prompt Chat Efficace
 
 ```
-mon-projet-python/
-├── .github/
-│   ├── copilot-instructions.md
-│   └── instructions/
-│       ├── fastapi-routes.instructions.md
-│       └── tests.instructions.md
-├── src/
-│   └── mon_package/
-│       ├── __init__.py
-│       ├── models/
-│       │   ├── __init__.py
-│       │   ├── user.py          # SQLAlchemy models
-│       │   └── product.py
-│       ├── schemas/
-│       │   ├── __init__.py
-│       │   ├── user.py          # Pydantic schemas
-│       │   └── product.py
-│       ├── api/
-│       │   ├── __init__.py
-│       │   ├── routes/
+@monprojet Génère tests complets avec pytest pour la fonction create_user
+
+Utilise :
+- AsyncClient pour tester l'endpoint POST /users
+- Fixture pour session DB + app FastAPI
+- Cas happy path + email déjà existant
+- Mock optionnellement UserService si nécessaire
+
+Structure : test_routes/test_users.py
+```
+
+**Copilot génère** :
+
+```python
+# tests/test_routes/test_users.py
+import pytest
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+
+from app.main import app
+from app.models.user import Base, User
+from app.schemas.user import UserCreate
+
+@pytest.fixture
+async def db_session():
+    """Fixture DB session de test."""
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    
+    async_session = async_sessionmaker(engine, class_=AsyncSession)
+    async with async_session() as session:
+        yield session
+
+@pytest.fixture
+async def client(db_session):
+    """Fixture client HTTP test."""
+    def override_get_db():
+        return db_session
+    
+    app.dependency_overrides[get_db_session] = override_get_db
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac
+    app.dependency_overrides.clear()
+
+@pytest.mark.asyncio
+async def test_create_user_success(client: AsyncClient):
+    """Test création utilisateur succès."""
+    response = await client.post(
+        "/users",
+        json={"email": "john@example.com", "name": "John", "age": 25}
+    )
+    assert response.status_code == 201
+    data = response.json()
+    assert data["email"] == "john@example.com"
+
+@pytest.mark.asyncio
+async def test_create_user_email_exists(client: AsyncClient, db_session: AsyncSession):
+    """Test création avec email déjà existant."""
+    # Créer user existant
+    existing_user = User(email="existing@example.com", name="Existing", age=30)
+    db_session.add(existing_user)
+    await db_session.commit()
+    
+    # Tentative doublé
+    response = await client.post(
+        "/users",
+        json={"email": "existing@example.com", "name": "Another", "age": 25}
+    )
+    assert response.status_code == 400
+    assert "already registered" in response.json()["detail"]
+```
+
+---
+
+## Pièges Courants Python/FastAPI
+
+| Piège | Signe | Solution |
+|-------|-------|----------|
+| **Pas de type hints** | Suggestions Copilot génériques | Ajouter annotations partout |
+| **Oublier await** | Coroutine non exécutée (Warning) | Toujours `await` pour async |
+| **Session DB pas fermée** | Fuites mémoire en production | Utiliser dépendances FastAPI |
+| **Pydantic v1 vs v2** | Incompatibilités `Config` | Utiliser v2 uniquement (2024) |
+| **N+1 queries SQLAlchemy** | Requêtes exponentielles | Utiliser `selectinload()` pour relations |
+| **Mutation de modèle** | Changements non persistés | Toujours `commit()` après modification |
+
+---
+
+## Diagramme : FastAPI + Copilot
+
+```mermaid
+graph TD
+    A["HTTP Request"] --> B["FastAPI Router"]
+    B --> C["Pydantic Schema<br/>(Validation)"]
+    C --> D["Service<br/>(Logique métier)"]
+    D --> E["SQLAlchemy ORM<br/>(Async)"]
+    E --> F["PostgreSQL<br/>(DB)"]
+    
+    G["Copilot Instructions"] -.-> D
+    G -.-> E
+    
+    D --> H["Response Schema<br/>(Pydantic)"]
+    H --> I["JSON Response"]
+    
+    style G fill:#fff3e0
+    style D fill:#e8f5e9
+    style E fill:#f3e5f5
+```
+
+---
+
+## Ressources
+
+- [Best Practices](../chapitre-4-bonnes-pratiques/utilisation-effective.md)
+- [Comparaison Écosystèmes](comparaison-ecosystemes.md)
+- [Configuration VS Code](../chapitre-2-parametrage/vscode-parametrage.md)
 │       │   └── dependencies.py
 │       ├── services/
 │       └── repositories/

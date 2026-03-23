@@ -2,42 +2,33 @@
 
 <span class="badge-intermediate">Intermédiaire</span>
 
-## Principe de base : Copilot génère, vous validez
+## Principe Fondamental : Validation est Votre Responsabilité
 
-GitHub Copilot est entraîné sur des milliards de lignes de code public — code de qualité variable, parfois avec des bugs, parfois avec des problèmes de sécurité. **Vous êtes responsable de tout ce que vous committez**, qu'il soit généré par Copilot ou écrit manuellement.
+GitHub Copilot est entraîné sur des milliards de lignes de code public — code de qualité variable. **Vous êtes responsable de tout ce que vous committez**, qu'il soit généré par Copilot ou écrit manuellement.
 
----
-
-## Checklist de vérification du code généré
-
-### Vérification logique
-
-- [ ] **Le code fait bien ce que le commentaire/prompt demandait ?** Pas d'interprétation erronée
-- [ ] **Les cas limites sont gérés ?** (null, undefined, tableau vide, valeur max/min)
-- [ ] **Les conditions d'erreur sont traitées ?** (try/catch, vérification des return codes)
-- [ ] **La logique est-elle correcte ?** Pas d'erreur de comparaison (< vs <=, && vs ||)
-- [ ] **Les boucles ont des conditions de sortie ?** Pas de boucle infinie possible
-
-### Vérification de sécurité
-
-- [ ] **Pas d'injection SQL** — les paramètres sont-ils paramétrisés, jamais concaténés ?
-- [ ] **Pas de XSS** — le HTML généré est-il échappé ?
-- [ ] **Pas de secrets hardcodés** — clés API, mots de passe, tokens ?
-- [ ] **Validation des entrées** — les données utilisateur sont-elles validées *avant* utilisation ?
-- [ ] **Pas d'exposition de données sensibles** — les logs/erreurs ne leakent pas de données privées ?
-
-### Vérification de conformité
-
-- [ ] **Respect des conventions du projet** ?
-- [ ] **Imports corrects et complets** ?
-- [ ] **Pas de dépendances inconnues** introduites sans raison ?
-- [ ] **Pas de code déprécié** pour la version utilisée ?
+**Règle d'or** : Pas de code généré n'entre en production sans review sécurité + tests.
 
 ---
 
-## Risques de sécurité courants dans le code généré
+## Checklist Rapide
 
-### 1. Injection SQL
+| Élément | Check | Impact |
+|---------|-------|--------|
+| **SQL** | Paramètres préparés (jamais concaténation) | 🔴 CRITIQUE |
+| **Input Validation** | Toutes les entrées user validées avant use | 🔴 CRITIQUE |
+| **Secrets** | Jamais de clés hardcodées (env vars only) | 🔴 CRITIQUE |
+| **XSS** | HTML/URLs échappés | 🔴 CRITIQUE |
+| **Dependencies** | Aucune dépendance inconnue ajoutée | 🟠 IMPORTANT |
+| **Error Handling** | Try-catch/error middleware utilisés | 🟠 IMPORTANT |
+| **Logging** | Pas de données sensibles en logs | 🟠 IMPORTANT |
+| **Tests** | Coverage ≥ 80% des paths | 🟡 MOYEN |
+| **Types** | Pas d'`any`, tous paramètres typés | 🟡 MOYEN |
+
+---
+
+## Vulnérabilités Communes Générées par Copilot
+
+### 1. 🔴 Injection SQL
 
 ```python
 # ❌ Code dangereux que Copilot peut parfois générer
@@ -51,33 +42,182 @@ def get_user(username: str):
     return db.execute(query, (username,))
 ```
 
-!!! danger "Vérifiez tous les accès DB générés"
-    Toute construction SQL générée par Copilot doit être inspectée. Si vous voyez une concaténation de chaîne dans une requête SQL, c'est un signal d'alarme immédiat.
+**Signal d'alarme** : Concaténation de chaîne dans du SQL = 🚨 STOP
 
-### 2. Secrets hardcodés
+---
+
+### 2. 🔴 Secrets Hardcodés
 
 ```javascript
-// ❌ Copilot peut compléter avec des valeurs d'exemple qui ressemblent à de vrais secrets
+// ❌ Copilot peut compléter avec des valeurs d'exemple ressemblant à de vrais secrets
 const config = {
-    apiKey: "sk-1234567890abcdef",  // JAMAIS hardcoder
-    dbPassword: "password123",       // JAMAIS hardcoder
-    jwtSecret: "mysecretkey"         // JAMAIS hardcoder
+    apiKey: "sk-1234567890abcdef",
+    dbPassword: "password123",
+    jwtSecret: "mysecretkey"
 };
 
 // ✅ Toujours utiliser des variables d'environnement
 const config = {
-    apiKey: process.env.API_KEY!,
-    dbPassword: process.env.DB_PASSWORD!,
-    jwtSecret: process.env.JWT_SECRET!
+    apiKey: process.env.API_KEY ?? (() => { throw new Error('Missing API_KEY') })(),
+    dbPassword: process.env.DB_PASSWORD ?? (() => { throw new Error('Missing DB_PASSWORD') })(),
+    jwtSecret: process.env.JWT_SECRET ?? (() => { throw new Error('Missing JWT_SECRET') })()
 };
 ```
 
-### 3. Validation insuffisante des entrées
+**Stratégie** : 
+- Déjà hardcodé? `git rm --cached` + add `.gitignore`
+- Utiliser `git-secrets` ou `detect-secrets` en pre-commit
+
+---
+
+### 3. 🔴 Validation Insuffisante des Entrées
 
 ```typescript
-// ❌ Copilot génère parfois du code sans validation suffisante
+// ❌ Copilot génère parfois sans validation
 app.post('/users', (req, res) => {
-    const user = req.body;  // Données non validées utilisées directement
+    const user = req.body;  // Données non validées
+    db.users.create(user);  // DANGER
+    res.json(user);
+});
+
+// ✅ Validation avec Zod/Joi
+import { z } from 'zod';
+
+const createUserSchema = z.object({
+    email: z.string().email('Invalid email'),
+    name: z.string().min(2, 'Name required'),
+    age: z.number().int().min(18, 'Must be 18+')
+});
+
+app.post('/users', (req, res) => {
+    try {
+        const validatedData = createUserSchema.parse(req.body);
+        db.users.create(validatedData);
+        res.json(validatedData);
+    } catch (error) {
+        res.status(400).json({ error: 'Validation failed' });
+    }
+});
+```
+
+---
+
+### 4. 🟠 Cross-Site Scripting (XSS)
+
+```html
+<!-- ❌ Copilot peut générer sans échappement -->
+<div>{{ userInput }}</div>
+
+<!-- ✅ Échappement correct selon framework -->
+<!-- React -->
+<div>{userInput}</div>
+
+<!-- Angular -->
+<div>{{ userInput }}</div>
+
+<!-- Vue -->
+<div>{{ userInput }}</div>
+
+<!-- Plain HTML (JAMAIS faire ça) -->
+<div id="content"></div>
+<script>
+  document.getElementById('content').textContent = userInput;  // ✅ textContent, pas innerHTML
+</script>
+```
+
+---
+
+### 5. 🟠 Exposition de Données Sensibles en Logs
+
+```python
+# ❌ Copilot peut logger des données sensibles
+def authenticate(username: str, password: str):
+    logger.info(f"User {username} attempted login with password {password}")  # 🚨
+    # ...
+
+# ✅ Logger seulement ce qui est nécessaire
+def authenticate(username: str, password: str):
+    logger.info(f"Authentication attempt for user {username}")  # ✅
+    if not verify_password(password, stored_hash):
+        logger.warning(f"Failed authentication for {username}")
+    # Jamais log le password lui-même
+```
+
+---
+
+## Patterns de Validation Recommandés
+
+### Zod (TypeScript)
+```typescript
+import { z } from 'zod';
+
+const UserSchema = z.object({
+  email: z.string().email(),
+  age: z.number().int().min(0).max(150),
+  role: z.enum(['USER', 'ADMIN']).default('USER')
+});
+
+type User = z.infer<typeof UserSchema>;  // Type déduit automatiquement
+const user = UserSchema.parse(rawData);
+```
+
+### Pydantic (Python)
+```python
+from pydantic import BaseModel, EmailStr, validator
+
+class User(BaseModel):
+    email: EmailStr
+    age: int
+    role: str = 'USER'
+    
+    @validator('age')
+    def age_must_be_valid(cls, v):
+        if not 0 <= v <= 150:
+            raise ValueError('Age must be between 0 and 150')
+        return v
+```
+
+---
+
+## Review Copilot : Checklist Avant Commit
+
+```mermaid
+graph TD
+    A["Code généré par Copilot"] --> B{"Sécurité OK?"}
+    B -->|🔴 SQL/XSS/Secrets| C["❌ REJECT — Fix manuellement"]
+    B -->|🟠 Input validation| D{"Suffisant?"}
+    D -->|Non| E["⚠️ ADD validation"]
+    D -->|Oui| F{"Tests exist?"}
+    F -->|Non| G["⚠️ ADD tests"]
+    F -->|Oui| H{"Couverture ≥ 80%?"}
+    H -->|Non| I["⚠️ ADD test cases"]
+    H -->|Oui| J["✅ COMMIT"]
+    C --> K["Review + Fix"]
+    E --> K
+    G --> K
+    I --> K
+    K --> J
+```
+
+---
+
+## Outils de Vérification Automatique
+
+| Outil | Use Case | Integration |
+|-------|----------|-------------|
+| **SonarQube** | Qualité code + sécurité | CI/CD |
+| **git-secrets** | Détecter secrets en post-commit | Git hooks |
+| **Snyk** | Vulnérabilités dépendances | CI/CD |
+| **ESLint/Pylint** | Lint security rules | Pre-commit |
+| **OWASP ZAP** | Vuln scan API | CI/CD |
+
+---
+
+## Ressources
+
+- [Best Practices](utilisation-effective.md)
+- [Organisation Code](organisation-code.md)
+- [Chapitre Installation](../chapitre-1-installation/index.md)
     await createUser(user);
     res.json(user);
 });
